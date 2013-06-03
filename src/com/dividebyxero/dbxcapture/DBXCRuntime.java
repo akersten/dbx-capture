@@ -6,6 +6,7 @@
 package com.dividebyxero.dbxcapture;
 
 import com.dividebyxero.dbxcapture.config.Configuration;
+import com.dividebyxero.dbxcapture.gui.SettingsFrame;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -37,16 +38,19 @@ public class DBXCRuntime {
     //post-process scripts are.
     private String[] postProcessScripts;
 
+    //The settings frame for DBXCapture.
+    private SettingsFrame settingsFrame;
+
     /**
      * (Re)sets settings to default values. Should invoke if settings file
      * doesn't exist.
      */
     private void setDefaultSettings() {
-        settings.setSetting("bConfirmExit", "false");
-        settings.setSetting("sContentDirectory",
-                            "C:\\dbx\\DBXCapture\\content");
-        settings.setSetting("iUploadScript", "0");
-        settings.setSetting("bLocalMode", "false");
+        getSettings().setSetting("bConfirmExit", "false");
+        getSettings().setSetting("sContentDirectory",
+                                 "C:\\dbx\\DBXCapture\\content");
+        getSettings().setSetting("iUploadScript", "0");
+        getSettings().setSetting("bLocalMode", "false");
 
         if (!settings.saveSettings(new File(SETTINGS_FILE_NAME))) {
             JOptionPane.showMessageDialog(
@@ -76,7 +80,8 @@ public class DBXCRuntime {
      * If one or more of these is an issue, it will do its best to remedy the
      * problem by making directories/files or notifying the user.
      */
-    private void checkDirectoryStructureAndLoadConfiguration() throws IOException {
+    private void checkDirectoryStructureAndLoadConfiguration()
+            throws IOException {
         //First see if the settings file exists at all - make it if it doesn't.
         if (!settings.loadSettings(new File(SETTINGS_FILE_NAME))) {
             System.out.println(
@@ -134,15 +139,15 @@ public class DBXCRuntime {
         //Make sure our selected script is within range of how many scripts
         //there actually are.
         int currentSetting =
-            Integer.parseInt(settings.getSetting("iUploadScript"));
+            Integer.parseInt(getSettings().getSetting("iUploadScript"));
 
         if ((currentSetting < 0)
             || (currentSetting > (tmpScriptLines.size() - 1))) {
             System.out.println(
                     "Selected script out of range, resetting to default...");
 
-            settings.setSetting("iUploadScript", "0");
-            settings.saveSettings(new File(SETTINGS_FILE_NAME));
+            getSettings().setSetting("iUploadScript", "0");
+            getSettings().saveSettings(new File(SETTINGS_FILE_NAME));
         }
 
         Path scriptsFolder = Paths.get("scripts/");
@@ -158,7 +163,7 @@ public class DBXCRuntime {
 
         //Check if the content directory exists and is writable.
         Path contentDirectory =
-             Paths.get(settings.getSetting("sContentDirectory"));
+             Paths.get(getSettings().getSetting("sContentDirectory"));
 
         if (!Files.isDirectory(contentDirectory)) {
             System.out.println("Content directory did not exist, creating...");
@@ -169,13 +174,60 @@ public class DBXCRuntime {
     public DBXCRuntime() {
         //Debug
         Path workingDir = Paths.get(".");
-        System.out.println("Working directory is " + workingDir.toAbsolutePath().toString());
-        //Initialize the configuration object - this gets loaded from disk soon.
+        System.out.println("Working directory is "
+                           + workingDir.toAbsolutePath().toString());
+
+        //Initialize the configuration object - this gets loaded from disk next.
         settings = new Configuration();
 
         try {
             checkDirectoryStructureAndLoadConfiguration();
         } catch (IOException ioe) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "I/O error during working directory configuration. Make "
+                    + "sure " + workingDir.toAbsolutePath().toString()
+                    + " exists and is writable. If this problem persists, try "
+                    + "deleting " + SETTINGS_FILE_NAME, "DBXCapture - Error",
+                    JOptionPane.ERROR_MESSAGE);
+
+            System.exit(1);
         }
+
+        //Create the settings frame with the default settings loaded. Don't
+        //show it yet though. The settings frame will take care of selecting
+        //the correct options based on the current setup.
+        settingsFrame = new SettingsFrame(this);
+
+
+
+
+
+
+
+
+
+
+    }
+
+    /**
+     * @return the settings
+     */
+    public Configuration getSettings() {
+        return settings;
+    }
+
+    /**
+     * @return the settingsFrame
+     */
+    public SettingsFrame getSettingsFrame() {
+        return settingsFrame;
+    }
+
+    /**
+     * @return the postProcessScripts
+     */
+    public String[] getPostProcessScripts() {
+        return postProcessScripts;
     }
 }

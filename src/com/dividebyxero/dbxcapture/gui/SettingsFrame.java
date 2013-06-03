@@ -14,26 +14,39 @@ package com.dividebyxero.dbxcapture.gui;
 import com.dividebyxero.dbxcapture.DBXCRuntime;
 import java.io.File;
 import javax.imageio.ImageIO;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 
 /**
+ * Frame for modifying configuration of DBXCapture. Create it once at the
+ * program startup and then hide it... Save the reference. Or don't, doesn't
+ * really matter, it's just the better way.
  *
- * @author Alex
+ * @author Alex Kersten
  */
+@SuppressWarnings("serial")
 public class SettingsFrame extends javax.swing.JFrame {
 
     private DBXCRuntime context;
 
     /**
-     * Creates new form SettingsFrame.
+     * Creates new form SettingsFrame. Only create after context.getSettings()
+     * is accessible and loaded.
+     *
      * Any state that needs to be read from the settings in the runtime context
-     * should be done here (i.e. look for which scripts are active and populate
-     * the dropdown menu with those, set it to the right one based on current
+     * is done here (i.e. looks for which scripts are active and populates the
+     * dropdown menu with those, sets it to the right one based on current
      * index, etc.)
      */
     public SettingsFrame(DBXCRuntime context) {
-        if (context != null) {
-            this.context = context;
+        if (context == null) {
+            JOptionPane.showMessageDialog(null, "No context for SettingsFrame!",
+                                          "DBXCapture - Warning",
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
         }
+
+        this.context = context;
 
         initComponents();
         try {
@@ -43,7 +56,43 @@ public class SettingsFrame extends javax.swing.JFrame {
         }
 
         this.setLocationRelativeTo(null);
+
         updateButton.setVisible(false);
+        setupFromLoadedSettings();
+    }
+
+    /**
+     * Internal method for populating fields based on loaded settings read from
+     * the runtime context.
+     */
+    @SuppressWarnings("unchecked")
+    private void setupFromLoadedSettings() {
+
+        //Populate fields based on current settings.
+        confirmExitCheckBox.setSelected(context.getSettings().
+                getSetting("bConfirmExit").equalsIgnoreCase("true"));
+
+        contentDirectoryTextField.setText(context.getSettings().
+                getSetting("sContentDirectory"));
+
+        //Create model for script dropdown and set its index to the proper one.
+        DefaultComboBoxModel<String> newModel = new DefaultComboBoxModel<>();
+
+        for (int i = 0; i < context.getPostProcessScripts().length; i++) {
+            newModel.addElement(context.getPostProcessScripts()[i]);
+        }
+
+        currentScriptComboBox.setModel(newModel);
+
+        //We already know this index is within range - it was checked when the
+        //settings were loaded.
+        currentScriptComboBox.setSelectedIndex(
+                Integer.parseInt(
+                context.getSettings().getSetting("iUploadScript")));
+
+        localmodeCheckBox.setSelected(context.getSettings().
+                getSetting("bLocalMode").equalsIgnoreCase("true"));
+
     }
 
     /**
@@ -55,319 +104,319 @@ public class SettingsFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        multimonitorButtonGroup = new javax.swing.ButtonGroup();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel8 = new javax.swing.JPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jPanel10 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        settingsTabbedPane = new javax.swing.JTabbedPane();
+        dbxcSettingsPanel = new javax.swing.JPanel();
+        generalSettingsPanel = new javax.swing.JPanel();
+        confirmExitCheckBox = new javax.swing.JCheckBox();
+        contentDirectoryPanel = new javax.swing.JPanel();
+        contentDirectoryTextField = new javax.swing.JTextField();
         updateButton = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
-        jLabel6 = new javax.swing.JLabel();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel30 = new javax.swing.JLabel();
-        jLabel31 = new javax.swing.JLabel();
-        jCheckBox6 = new javax.swing.JCheckBox();
-        jLabel35 = new javax.swing.JLabel();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel24 = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
-        jLabel26 = new javax.swing.JLabel();
-        jLabel27 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jLabel33 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        scriptsSettingsPanel = new javax.swing.JPanel();
+        scriptinfo1Label = new javax.swing.JLabel();
+        scriptinfo2Label = new javax.swing.JLabel();
+        example1Label = new javax.swing.JLabel();
+        example2Label = new javax.swing.JLabel();
+        currentScriptPanel = new javax.swing.JPanel();
+        currentScriptComboBox = new javax.swing.JComboBox();
+        scriptinfo3Label = new javax.swing.JLabel();
+        scriptVariablesPanel = new javax.swing.JPanel();
+        imagepath1Label = new javax.swing.JLabel();
+        imagepath2Label = new javax.swing.JLabel();
+        localmodeCheckBox = new javax.swing.JCheckBox();
+        localmodeLabel = new javax.swing.JLabel();
+        aboutPanel = new javax.swing.JPanel();
+        iconLabel = new javax.swing.JLabel();
+        dbxcaptureLabel = new javax.swing.JLabel();
+        versionLabel = new javax.swing.JLabel();
+        authorLabel = new javax.swing.JLabel();
+        githubButton = new javax.swing.JButton();
+        dividebyxeroButton = new javax.swing.JButton();
+        alexkerstenButton = new javax.swing.JButton();
+        byLabel = new javax.swing.JLabel();
+        githubLabel = new javax.swing.JLabel();
+        dividebyxeroLabel = new javax.swing.JLabel();
+        alexkerstenLabel = new javax.swing.JLabel();
+        cancelButton = new javax.swing.JButton();
+        applyButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("DBXCapture Options");
+        setTitle("DBXCapture - Options");
         setResizable(false);
 
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("General"));
+        generalSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("General"));
 
-        jCheckBox1.setText("Confirm exit");
+        confirmExitCheckBox.setText("Confirm exit");
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
+        javax.swing.GroupLayout generalSettingsPanelLayout = new javax.swing.GroupLayout(generalSettingsPanel);
+        generalSettingsPanel.setLayout(generalSettingsPanelLayout);
+        generalSettingsPanelLayout.setHorizontalGroup(
+            generalSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(generalSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jCheckBox1)
+                .addComponent(confirmExitCheckBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
+        generalSettingsPanelLayout.setVerticalGroup(
+            generalSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(generalSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jCheckBox1)
+                .addComponent(confirmExitCheckBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("Content directory"));
+        contentDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Content directory"));
 
-        jTextField1.setText("C:\\dbx\\DBXCapture\\tmp");
+        contentDirectoryTextField.setText("C:\\dbx\\DBXCapture\\tmp");
 
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
+        javax.swing.GroupLayout contentDirectoryPanelLayout = new javax.swing.GroupLayout(contentDirectoryPanel);
+        contentDirectoryPanel.setLayout(contentDirectoryPanelLayout);
+        contentDirectoryPanelLayout.setHorizontalGroup(
+            contentDirectoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contentDirectoryPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1)
+                .addComponent(contentDirectoryTextField)
                 .addContainerGap())
         );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel10Layout.createSequentialGroup()
+        contentDirectoryPanelLayout.setVerticalGroup(
+            contentDirectoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contentDirectoryPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(contentDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
         updateButton.setText("A new version of DBXCapture is available. Click to automatically install it.");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout dbxcSettingsPanelLayout = new javax.swing.GroupLayout(dbxcSettingsPanel);
+        dbxcSettingsPanel.setLayout(dbxcSettingsPanelLayout);
+        dbxcSettingsPanelLayout.setHorizontalGroup(
+            dbxcSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dbxcSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(updateButton, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))
+                .addGroup(dbxcSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(generalSettingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(contentDirectoryPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(updateButton, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        dbxcSettingsPanelLayout.setVerticalGroup(
+            dbxcSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dbxcSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(generalSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(contentDirectoryPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(updateButton)
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("DBXC", jPanel1);
+        settingsTabbedPane.addTab("DBXC", dbxcSettingsPanel);
 
-        jLabel5.setText("After capturing a screenshot and saving it to a file, dbxcapture passes the file path to a script for");
+        scriptinfo1Label.setText("After capturing a screenshot and saving it to a file, dbxcapture passes the file path to a script for");
 
-        jLabel7.setText("further processing. The default script uploads the screenshot to Imgur.");
+        scriptinfo2Label.setText("further processing. The default script uploads the screenshot to Imgur.");
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel10.setText("Example:");
+        example1Label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        example1Label.setText("Example:");
 
-        jLabel11.setText("python uploadScrypt.py %imagepath%");
+        example2Label.setText("python uploadScrypt.py %imagepath%");
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Current upload script"));
+        currentScriptPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Current upload script"));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<selected script>" }));
+        currentScriptComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<selected script>" }));
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout currentScriptPanelLayout = new javax.swing.GroupLayout(currentScriptPanel);
+        currentScriptPanel.setLayout(currentScriptPanelLayout);
+        currentScriptPanelLayout.setHorizontalGroup(
+            currentScriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(currentScriptPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(currentScriptComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        currentScriptPanelLayout.setVerticalGroup(
+            currentScriptPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(currentScriptComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        jLabel6.setText("These scripts are specified in scripts.cfg in the dbxcapture installation directory, one per line.");
+        scriptinfo3Label.setText("These scripts are specified in scripts.cfg in the dbxcapture installation directory, one per line.");
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Script variables"));
+        scriptVariablesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Script variables"));
 
-        jLabel30.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel30.setText("%imagepath%");
+        imagepath1Label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        imagepath1Label.setText("%imagepath%");
 
-        jLabel31.setText("The absolute path to the most recent screenshot.");
+        imagepath2Label.setText("The absolute path to the most recent screenshot.");
 
-        jCheckBox6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jCheckBox6.setText("%localmode%");
+        localmodeCheckBox.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        localmodeCheckBox.setText("%localmode%");
 
-        jLabel35.setText("Save to desktop instead of upload.");
+        localmodeLabel.setText("Save to desktop instead of upload.");
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
+        javax.swing.GroupLayout scriptVariablesPanelLayout = new javax.swing.GroupLayout(scriptVariablesPanel);
+        scriptVariablesPanel.setLayout(scriptVariablesPanelLayout);
+        scriptVariablesPanelLayout.setHorizontalGroup(
+            scriptVariablesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scriptVariablesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE)
-                        .addComponent(jLabel31))
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jCheckBox6)
+                .addGroup(scriptVariablesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(scriptVariablesPanelLayout.createSequentialGroup()
+                        .addComponent(imagepath1Label, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel35)))
+                        .addComponent(imagepath2Label))
+                    .addGroup(scriptVariablesPanelLayout.createSequentialGroup()
+                        .addComponent(localmodeCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(localmodeLabel)))
                 .addContainerGap())
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel30)
-                    .addComponent(jLabel31))
+        scriptVariablesPanelLayout.setVerticalGroup(
+            scriptVariablesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scriptVariablesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(scriptVariablesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(imagepath1Label)
+                    .addComponent(imagepath2Label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox6)
-                    .addComponent(jLabel35)))
+                .addGroup(scriptVariablesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(localmodeCheckBox)
+                    .addComponent(localmodeLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout scriptsSettingsPanelLayout = new javax.swing.GroupLayout(scriptsSettingsPanel);
+        scriptsSettingsPanel.setLayout(scriptsSettingsPanelLayout);
+        scriptsSettingsPanelLayout.setHorizontalGroup(
+            scriptsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scriptsSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
+                .addGroup(scriptsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scriptVariablesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(scriptinfo1Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(scriptinfo2Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(scriptsSettingsPanelLayout.createSequentialGroup()
+                        .addComponent(example1Label)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(example2Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(currentScriptPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(scriptinfo3Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        scriptsSettingsPanelLayout.setVerticalGroup(
+            scriptsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scriptsSettingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5)
+                .addComponent(scriptinfo1Label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
+                .addComponent(scriptinfo2Label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(currentScriptPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6)
+                .addComponent(scriptinfo3Label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel11))
+                .addGroup(scriptsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(example1Label)
+                    .addComponent(example2Label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addComponent(scriptVariablesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Scripts", jPanel2);
+        settingsTabbedPane.addTab("Scripts", scriptsSettingsPanel);
 
-        jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dividebyxero/dbxcapture/gui/icon128.png"))); // NOI18N
+        iconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dividebyxero/dbxcapture/gui/icon128.png"))); // NOI18N
 
-        jLabel25.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel25.setText("DBXCapture");
+        dbxcaptureLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        dbxcaptureLabel.setText("DBXCapture");
 
-        jLabel26.setText("<version>");
+        versionLabel.setText("<version>");
 
-        jLabel27.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel27.setText("Alex Kersten");
+        authorLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        authorLabel.setText("Alex Kersten");
 
-        jButton3.setText("GitHub Page");
+        githubButton.setText("GitHub Page");
 
-        jButton4.setText("dividebyxero.com");
+        dividebyxeroButton.setText("dividebyxero.com");
 
-        jButton5.setText("alexkersten.com");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        alexkerstenButton.setText("alexkersten.com");
+        alexkerstenButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                alexkerstenButtonActionPerformed(evt);
             }
         });
 
-        jLabel33.setText("by");
+        byLabel.setText("by");
 
-        jLabel1.setText("Source code and revision history");
+        githubLabel.setText("Source code and revision history");
 
-        jLabel2.setText("Blog and DBXCapture project page");
+        dividebyxeroLabel.setText("Blog and DBXCapture project page");
 
-        jLabel3.setText("Information about me and other projects");
+        alexkerstenLabel.setText("Information about me and other projects");
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        javax.swing.GroupLayout aboutPanelLayout = new javax.swing.GroupLayout(aboutPanel);
+        aboutPanel.setLayout(aboutPanelLayout);
+        aboutPanelLayout.setHorizontalGroup(
+            aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(aboutPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel24)
+                .addComponent(iconLabel)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel25)
+                .addGroup(aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(versionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(aboutPanelLayout.createSequentialGroup()
+                        .addComponent(dbxcaptureLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel33)
+                        .addComponent(byLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel27)
+                        .addComponent(authorLabel)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(aboutPanelLayout.createSequentialGroup()
+                        .addGroup(aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(githubButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(alexkerstenButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dividebyxeroButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))))
+                        .addGroup(aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(githubLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dividebyxeroLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(alexkerstenLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))))
                 .addContainerGap())
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        aboutPanelLayout.setVerticalGroup(
+            aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(aboutPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel25)
-                            .addComponent(jLabel27)
-                            .addComponent(jLabel33))
+                .addGroup(aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(aboutPanelLayout.createSequentialGroup()
+                        .addGroup(aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(dbxcaptureLabel)
+                            .addComponent(authorLabel)
+                            .addComponent(byLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel26)
+                        .addComponent(versionLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton3)
-                            .addComponent(jLabel1))
+                        .addGroup(aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(githubButton)
+                            .addComponent(githubLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton4)
-                            .addComponent(jLabel2))
+                        .addGroup(aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(dividebyxeroButton)
+                            .addComponent(dividebyxeroLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton5)
-                            .addComponent(jLabel3)))
-                    .addComponent(jLabel24))
-                .addContainerGap(129, Short.MAX_VALUE))
+                        .addGroup(aboutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(alexkerstenButton)
+                            .addComponent(alexkerstenLabel)))
+                    .addComponent(iconLabel))
+                .addContainerGap(106, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("About", jPanel5);
+        settingsTabbedPane.addTab("About", aboutPanel);
 
-        jButton1.setText("Cancel");
+        cancelButton.setText("Cancel");
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton2.setText("Apply Changes");
+        applyButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        applyButton.setText("Apply Changes");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -375,67 +424,66 @@ public class SettingsFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
+                .addComponent(applyButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(cancelButton)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(settingsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1)
+                .addComponent(settingsTabbedPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(cancelButton)
+                    .addComponent(applyButton))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+    private void alexkerstenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alexkerstenButtonActionPerformed
+        //  
+    }//GEN-LAST:event_alexkerstenButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel30;
-    private javax.swing.JLabel jLabel31;
-    private javax.swing.JLabel jLabel33;
-    private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.ButtonGroup multimonitorButtonGroup;
+    private javax.swing.JPanel aboutPanel;
+    private javax.swing.JButton alexkerstenButton;
+    private javax.swing.JLabel alexkerstenLabel;
+    private javax.swing.JButton applyButton;
+    private javax.swing.JLabel authorLabel;
+    private javax.swing.JLabel byLabel;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JCheckBox confirmExitCheckBox;
+    private javax.swing.JPanel contentDirectoryPanel;
+    private javax.swing.JTextField contentDirectoryTextField;
+    private javax.swing.JComboBox currentScriptComboBox;
+    private javax.swing.JPanel currentScriptPanel;
+    private javax.swing.JPanel dbxcSettingsPanel;
+    private javax.swing.JLabel dbxcaptureLabel;
+    private javax.swing.JButton dividebyxeroButton;
+    private javax.swing.JLabel dividebyxeroLabel;
+    private javax.swing.JLabel example1Label;
+    private javax.swing.JLabel example2Label;
+    private javax.swing.JPanel generalSettingsPanel;
+    private javax.swing.JButton githubButton;
+    private javax.swing.JLabel githubLabel;
+    private javax.swing.JLabel iconLabel;
+    private javax.swing.JLabel imagepath1Label;
+    private javax.swing.JLabel imagepath2Label;
+    private javax.swing.JCheckBox localmodeCheckBox;
+    private javax.swing.JLabel localmodeLabel;
+    private javax.swing.JPanel scriptVariablesPanel;
+    private javax.swing.JLabel scriptinfo1Label;
+    private javax.swing.JLabel scriptinfo2Label;
+    private javax.swing.JLabel scriptinfo3Label;
+    private javax.swing.JPanel scriptsSettingsPanel;
+    private javax.swing.JTabbedPane settingsTabbedPane;
     private javax.swing.JButton updateButton;
+    private javax.swing.JLabel versionLabel;
     // End of variables declaration//GEN-END:variables
 
 }
