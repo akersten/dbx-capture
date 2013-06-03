@@ -7,6 +7,7 @@ package com.dividebyxero.dbxcapture;
 
 import com.dividebyxero.dbxcapture.config.Configuration;
 import com.dividebyxero.dbxcapture.gui.DBXCTrayComponent;
+import com.dividebyxero.dbxcapture.gui.DebugFrame;
 import com.dividebyxero.dbxcapture.gui.SettingsFrame;
 import com.dividebyxero.dbxcapture.runners.ScreenshotRunner;
 import java.io.File;
@@ -199,7 +200,7 @@ public class DBXCRuntime {
         System.exit(0);
     }
 
-    public DBXCRuntime() {
+    public DBXCRuntime(boolean debug) {
         //Debug
         Path workingDir = Paths.get(".");
         System.out.println("Working directory is "
@@ -231,7 +232,15 @@ public class DBXCRuntime {
         //Sanity checks should all be done by now, so start the key listener and
         //show the tray icon.
         trayComponent = new DBXCTrayComponent(this);
-        screenshotRunner = new ScreenshotRunner(this);
+
+        //If we're not in debug mode, start the listeners, otherwise start the
+        //debug interface.
+        if (debug) {
+            DebugFrame debugFrame = new DebugFrame(this);
+            debugFrame.setVisible(true);
+        } else {
+            screenshotRunner = new ScreenshotRunner(this);
+        }
     }
 
     /**

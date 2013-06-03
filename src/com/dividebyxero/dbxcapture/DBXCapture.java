@@ -22,7 +22,17 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class DBXCapture {
 
+    //Set if this build should run the debug interface instead of the normal
+    //keyboard listeners. Should always be false in production, otherwise DBXC
+    //doesn't do much.
+    private static final boolean DEBUG_BUILD = true;
+
+    //Global version string for DBXCapture, appears in many places.
     public static final String VERSION = "2.0.0 Dev";
+
+    //Singleton for the runtime, set once at the beginning here and probably
+    //won't change.
+    private static DBXCRuntime runtime;
 
     public static void main(String[] args) {
         try {
@@ -33,6 +43,6 @@ public class DBXCapture {
             System.err.println("Couldn't set the system look and feel.");
         }
 
-        new DBXCRuntime();
+        runtime = new DBXCRuntime(DEBUG_BUILD);
     }
 }
