@@ -72,8 +72,8 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         //TODO: Implement update checking and updating.
         updateButton.setVisible(false);
-        
-        
+
+
         setupFromLoadedSettings();
         versionLabel.setText(DBXCapture.VERSION);
 
@@ -198,6 +198,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         trigger2Label = new javax.swing.JLabel();
         triggerFinishedButton = new javax.swing.JButton();
         resetTriggerButton = new javax.swing.JButton();
+        trigger3Label = new javax.swing.JLabel();
         scriptsSettingsPanel = new javax.swing.JPanel();
         scriptinfo1Label = new javax.swing.JLabel();
         scriptinfo2Label = new javax.swing.JLabel();
@@ -330,6 +331,8 @@ public class SettingsFrame extends javax.swing.JFrame {
             }
         });
 
+        trigger3Label.setText("Change will go into effect after next screenshot or program restart.");
+
         javax.swing.GroupLayout screenshotSettingsPanelLayout = new javax.swing.GroupLayout(screenshotSettingsPanel);
         screenshotSettingsPanel.setLayout(screenshotSettingsPanelLayout);
         screenshotSettingsPanelLayout.setHorizontalGroup(
@@ -339,14 +342,15 @@ public class SettingsFrame extends javax.swing.JFrame {
                 .addComponent(trigger1Label)
                 .addGap(18, 18, 18)
                 .addGroup(screenshotSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(trigger2Label, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+                    .addComponent(trigger2Label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(screenshotSettingsPanelLayout.createSequentialGroup()
                         .addComponent(triggerTextField)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(triggerFinishedButton))
                     .addGroup(screenshotSettingsPanelLayout.createSequentialGroup()
                         .addComponent(resetTriggerButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(trigger3Label, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE))
                 .addContainerGap())
         );
         screenshotSettingsPanelLayout.setVerticalGroup(
@@ -361,7 +365,9 @@ public class SettingsFrame extends javax.swing.JFrame {
                 .addComponent(trigger2Label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(resetTriggerButton)
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(trigger3Label)
+                .addContainerGap(143, Short.MAX_VALUE))
         );
 
         settingsTabbedPane.addTab("Screenshot Options", screenshotSettingsPanel);
@@ -727,6 +733,7 @@ public class SettingsFrame extends javax.swing.JFrame {
     private javax.swing.JTabbedPane settingsTabbedPane;
     private javax.swing.JLabel trigger1Label;
     private javax.swing.JLabel trigger2Label;
+    private javax.swing.JLabel trigger3Label;
     private javax.swing.JButton triggerFinishedButton;
     private javax.swing.JTextField triggerTextField;
     private javax.swing.JButton updateButton;

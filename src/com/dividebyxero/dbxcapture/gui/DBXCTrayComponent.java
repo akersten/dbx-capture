@@ -19,34 +19,34 @@ import javax.swing.JOptionPane;
  * @author Alex Kersten
  */
 public class DBXCTrayComponent {
-    
+
     private DBXCRuntime context;
-    
+
     private TrayIcon trayIcon;
-    
+
     private PopupMenu trayMenu;
-    
+
     public static final String[] TOGGLE_STRINGS = {"Switch to local mode",
                                                    "Switch to upload mode"};
-    
+
     public static final String[] DISABLE_STRINGS = {"Temporarily disable dbxc",
                                                     "Re-enable dbxc"};
-    
+
     public DBXCTrayComponent(DBXCRuntime context) {
         this.context = context;
 
         //Final context reference so inner anonymous classes can see it.
         final DBXCRuntime contextRef = context;
-        
+
         if (context == null) {
             JOptionPane.showMessageDialog(null,
                                           "Tray icon with no context!",
                                           "dbxc - Error",
                                           JOptionPane.ERROR_MESSAGE);
-            
+
             return;
         }
-        
+
         if (!SystemTray.isSupported()) {
             JOptionPane.showMessageDialog(
                     null,
@@ -55,8 +55,8 @@ public class DBXCTrayComponent {
                     + "DBXC's functionality.", "DBXCapture - Warning",
                     JOptionPane.WARNING_MESSAGE);
         }
-        
-        
+
+
         try {
             //  trayIcon = new TrayIcon(ImageIO.read(new File("icon16.png")),
             //                          "DBXCapture  " + DBXCapture.VERSION);
@@ -64,13 +64,13 @@ public class DBXCTrayComponent {
             trayIcon = new TrayIcon(ImageIO.read(
                     this.getClass().getResource("icon16.png")),
                                     "DBXCapture " + DBXCapture.VERSION);
-            
+
         } catch (IOException ioe) {
             JOptionPane.showMessageDialog(
                     null,
                     "Couldn't load the tray icon.\n", "DBXCapture - Error",
                     JOptionPane.ERROR_MESSAGE);
-            
+
             return;
         }
 
@@ -83,24 +83,29 @@ public class DBXCTrayComponent {
         trayMenu.insert(new MenuItem("Exit"), 0);
         trayMenu.getItem(0).addActionListener(
                 new ActionListener() {
-                    
+
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        //TODO: Implement exit button
-                        /*
-                         * if (contextRef.getSettings().getSetting(
-                         * "bConfirmExit").equalsIgnoreCase("true")) { int
-                         * response = JOptionPane.showConfirmDialog( null, "Are
-                         * you sure you want to close dbxc?", "dbxc - Confirm
-                         * exit", JOptionPane.YES_NO_OPTION,
-                         * JOptionPane.QUESTION_MESSAGE);
-                         *
-                         * if (response == JOptionPane.YES_OPTION) {
-                         * contextRef.quit(); } } else { contextRef.quit(); }
-                         */
+                        if (contextRef.getSettings().getSetting(
+                                "bConfirmExit").equalsIgnoreCase("true")) {
+
+                            int response = JOptionPane.showConfirmDialog(
+                                    null,
+                                    "Are you sure you want to exit DBXCapture?",
+                                    "DBXCapture - Confirm exit",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE);
+
+                            if (response == JOptionPane.YES_OPTION) {
+                                contextRef.quit();
+                            }
+                        } else {
+                            contextRef.quit();
+                        }
+
                     }
                 });
-        
+
         trayMenu.insert(new MenuItem("-"), 0);
 
 
@@ -109,13 +114,13 @@ public class DBXCTrayComponent {
         trayMenu.insert(new MenuItem("Settings"), 0);
         trayMenu.getItem(0).addActionListener(
                 new ActionListener() {
-                    
+
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         contextRef.getSettingsFrame().setVisible(true);
                     }
                 });
-        
+
         trayMenu.insert(new MenuItem("-"), 0);
 
 
@@ -125,7 +130,7 @@ public class DBXCTrayComponent {
         trayMenu.insert(localToggleMenuItem, 0);
         localToggleMenuItem.addActionListener(
                 new ActionListener() {
-                    
+
                     public void actionPerformed(ActionEvent e) {
                         //TODO: Implement local mode toggle
                         /*
@@ -139,11 +144,11 @@ public class DBXCTrayComponent {
 
         //Temporary disable toggle button
         final MenuItem toggleDisabledMenuItem = new MenuItem(DISABLE_STRINGS[0]);
-        
+
         trayMenu.insert(toggleDisabledMenuItem, 0);
         toggleDisabledMenuItem.addActionListener(
                 new ActionListener() {
-                    
+
                     public void actionPerformed(ActionEvent e) {
                         //TODO: Implement temporary disable toggle
                         /*
@@ -154,11 +159,17 @@ public class DBXCTrayComponent {
                          */
                     }
                 });
-        
-        
+
+
+        //Shameless plug
+        trayMenu.insert(new MenuItem("-"), 0);
+        trayMenu.insert(new MenuItem("DBXCapture " + DBXCapture.VERSION), 0);
+        trayMenu.getItem(0).setEnabled(false);
+
+
         trayIcon.setPopupMenu(trayMenu);
-        
-        
+
+
         try {
             SystemTray.getSystemTray().add(trayIcon);
         } catch (AWTException e) {
@@ -168,6 +179,17 @@ public class DBXCTrayComponent {
                     + "Tray icon may not function as intended.",
                     "DBXCapture - Warning",
                     JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    /**
+     * Being nice to the OS and cleaning up our tray icon so it doesn't have to
+     * discover that it's been removed without being notified later (aka when
+     * the user puts the mouse over it and it suddenly disappears).
+     */
+    public void quitting() {
+        if (trayIcon != null) {
+            SystemTray.getSystemTray().remove(trayIcon);
         }
     }
 }
