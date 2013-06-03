@@ -217,15 +217,17 @@ public class DBXCRuntime {
     }
 
     /**
-     * Creates and starts a DBXCapture runtime. Note that some of the initial
-     * directory structure creation code is in the static block of the
-     * Platforming.java file.
+     * Creates and starts a DBXCapture runtime.
      *
      * @param debug Whether to start in debug mode or not. Debug mode will stop
      * the normal key listeners from running and launch the debug interface
      * instead. Not recommended for production ;).
      */
     public DBXCRuntime(boolean debug) {
+        //Run the initalizer in Platforming to set up the directory structure
+        //and load native libraries.
+        Platforming.staticInitialize();
+
         //Initialize the configuration object - this gets loaded from disk next.
         settings = new Configuration();
 

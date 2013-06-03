@@ -58,22 +58,23 @@ public abstract class Platforming {
         return true;
     }
 
-    /*
-     * This should be the only static block, to keep things oragnized. The first
-     * thing it will do is make sure we've got a directory to write in the
-     * user's home directory, and create it if not. It will also determine what
-     * platform we're on, set the platform variable in DBXCapture and load the
-     * native library.
+    /**
+     * The first thing we'll will do is make sure we've got a directory to write
+     * in the user's home directory, and create it if not. It will also
+     * determine what platform we're on, set the platform variable in DBXCapture
+     * and load the native library.
      *
      * This method also needs to create ~/dbx/DBXCapture/scripts (in turn
      * creating ~/dbx/DBXCapture which is where the libraries will be) and write
      * the default script bytecode to the scripts directory and the Windows
      * native libraries (if Windows is our platform) to the latter directory.
+     *
+     * This is the first method that runs, and it's in Platforming.java because
+     * the Platform enum is here and DBXCRuntime was getting a little cluttered.
      */
-    static {
+    public static void staticInitialize() {
         //Check if the user directory exists, and make it if it doesn't.
-        Path workingDir = Paths.get(System.getProperty("user.home")
-                                    + "/dbx/DBXCapture");
+        Path workingDir = Paths.get(DBXCRuntime.PROGRAM_HOME);
 
         if (!Files.isDirectory(workingDir)) {
             try {
@@ -129,7 +130,7 @@ public abstract class Platforming {
         //program at all.
         if (DBXCapture.platform == Platform.WIN) {
             Path testDLL =
-                 Paths.get(System.getProperty("user.home") + "/dbx/DBXCapture"
+                 Paths.get(DBXCRuntime.PROGRAM_HOME + "/"
                            + DBXCapture.platform.getLibName());
 
             if (!Files.exists(testDLL)) {
@@ -152,7 +153,7 @@ public abstract class Platforming {
 
         try {
 
-            System.load(System.getProperty("user.home") + "/dbx/DBXCapture/"
+            System.load(DBXCRuntime.PROGRAM_HOME + "/"
                         + DBXCapture.platform.getLibName());
 
         } catch (Throwable e) {
@@ -169,8 +170,7 @@ public abstract class Platforming {
                         + "page - the project is named dbx-libcapture.\n\nYou "
                         + "will need to place a resulting file named "
                         + DBXCapture.platform.getLibName() + " into the "
-                        + "directory " + System.getProperty("user.home")
-                        + "/dbx/DBXCapture/",
+                        + "directory " + DBXCRuntime.PROGRAM_HOME,
                         "DBXCapture - Error",
                         JOptionPane.ERROR_MESSAGE);
             } else {
@@ -178,8 +178,7 @@ public abstract class Platforming {
                         null,
                         "Couldn't load the native "
                         + "library " + DBXCapture.platform.getLibName() + " in "
-                        + "the directory " + System.getProperty("user.home")
-                        + "/dbx/DBXCapture/\n\n"
+                        + "the directory " + DBXCRuntime.PROGRAM_HOME + "\n\n"
                         + "One of the following is true:\n- It does not exist"
                         + "\n- It is not binary compatible with your system"
                         + "\n- It is corrupt"
