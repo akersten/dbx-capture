@@ -24,7 +24,7 @@ public abstract class DBXCNativeInterface {
      * Blocks until the user presses PrintScreen and then returns with the path
      * to a created PNG file on the hard drive.
      *
-     * @return The path to the created PNG file.
+     * @return The path to the created PNG file. NOTE: This should be in QUOTES.
      */
     public static native String waitForScreenshotActionAndReturnPath(
             String contentDirectory, int triggerVK);
