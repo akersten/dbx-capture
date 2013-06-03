@@ -10,7 +10,7 @@ package com.dividebyxero.dbxcapture.jni;
  *
  * @author Alex Kersten
  */
-public class DBXCNativeInterface {
+public abstract class DBXCNativeInterface {
 
     /**
      * This will just test to see if DirectX is even a feasible way of capturing
@@ -18,13 +18,14 @@ public class DBXCNativeInterface {
      * directory. Not used by the actual program (we'll use PNG) but useful for
      * testing.
      */
-    public native void debugDumpBuffer();
+    public static native void debugDumpBuffer();
 
     /**
      * Blocks until the user presses PrintScreen and then returns with the path
      * to a created PNG file on the hard drive.
      *
-     * @return
+     * @return The path to the created PNG file.
      */
-    public native String waitForScreenshotActionAndReturnPath(String contentDirectory, int triggerVK);
+    public static native String waitForScreenshotActionAndReturnPath(
+            String contentDirectory, int triggerVK);
 }

@@ -8,6 +8,7 @@ package com.dividebyxero.dbxcapture;
 import com.dividebyxero.dbxcapture.config.Configuration;
 import com.dividebyxero.dbxcapture.gui.DBXCTrayComponent;
 import com.dividebyxero.dbxcapture.gui.SettingsFrame;
+import com.dividebyxero.dbxcapture.runners.ScreenshotRunner;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -45,6 +46,9 @@ public class DBXCRuntime {
     //The tray component reference.
     private DBXCTrayComponent trayComponent;
 
+    //Listener for keypress actions
+    private ScreenshotRunner screenshotRunner;
+
     //The default script command line which will be put into scripts.cfg if
     //it doesn't exist.
     private static final String DEFAULT_SCRIPT =
@@ -61,7 +65,7 @@ public class DBXCRuntime {
         getSettings().setSetting("iUploadScript", "0");
         getSettings().setSetting("bLocalMode", "false");
         getSettings().setSetting("iScreenshotKey", "44");
-        
+
         if (!settings.saveSettings(new File(SETTINGS_FILE_NAME))) {
             JOptionPane.showMessageDialog(
                     null,
@@ -69,7 +73,7 @@ public class DBXCRuntime {
                     + "Please check write permissions on working directory.",
                     "DBXCapture - Error",
                     JOptionPane.ERROR_MESSAGE);
-            
+
             System.exit(1);
         }
     }
@@ -94,7 +98,7 @@ public class DBXCRuntime {
         if (!settings.loadSettings(new File(SETTINGS_FILE_NAME))) {
             System.out.println(
                     "Settings file does not exist, making with defaults...");
-            
+
             setDefaultSettings();
         }
 
@@ -102,32 +106,32 @@ public class DBXCRuntime {
         //Now let's check that scripts.cfg exists, and load the command line
         //actions from it. If it doesn't, create it and load the default.
         Path scriptsFile = Paths.get(SCRIPTS_FILE_NAME);
-        
-        
+
+
         if (!Files.exists(scriptsFile)) {
             System.out.println(
                     "Scripts file does not exist, making with defaults...");
 
             //Create the file and dump the defualt command line into it.
             Files.createFile(scriptsFile);
-            
+
             if (!Files.exists(scriptsFile)) {
                 //The file still doesn't exist despite creation attempt
                 throw new IOException("Couldn't create scripts.cfg file.\n"
                                       + "Check working directory permissions.");
             }
-            
+
             Files.write(scriptsFile, DEFAULT_SCRIPT.getBytes());
         }
 
         //Load the command lines into postProcessScripts, line by line.
         List<String> tmpScriptLines =
                      Files.readAllLines(scriptsFile, Charset.defaultCharset());
-        
+
         if (tmpScriptLines.isEmpty()) {
             System.out.println(
                     "Scripts file empty, deleting and using default...");
-            
+
             Files.delete(scriptsFile);
             postProcessScripts = new String[1];
             postProcessScripts[0] = DEFAULT_SCRIPT;
@@ -148,16 +152,16 @@ public class DBXCRuntime {
         //there actually are.
         int currentSetting =
             Integer.parseInt(getSettings().getSetting("iUploadScript"));
-        
+
         if ((currentSetting < 0)
             || (currentSetting > (tmpScriptLines.size() - 1))) {
             System.out.println(
                     "Selected script out of range, resetting to default...");
-            
+
             getSettings().setSetting("iUploadScript", "0");
             getSettings().saveSettings(new File(SETTINGS_FILE_NAME));
         }
-        
+
         Path scriptsFolder = Paths.get("scripts/");
         if (!Files.isDirectory(scriptsFolder)) {
             JOptionPane.showMessageDialog(
@@ -165,14 +169,14 @@ public class DBXCRuntime {
                           + " might need to reinstall DBXCapture.",
                     "DBXCapture - Warning", JOptionPane.WARNING_MESSAGE);
 
-            //TODO: Check for default script and insert it if necessary.
+            //TODO: Check for default script existing and insert it if necessary
         }
 
 
         //Check if the content directory exists and is writable.
         Path contentDirectory =
              Paths.get(getSettings().getSetting("sContentDirectory"));
-        
+
         if (!Files.isDirectory(contentDirectory)) {
             System.out.println("Content directory did not exist, creating...");
             Files.createDirectories(contentDirectory);
@@ -184,13 +188,17 @@ public class DBXCRuntime {
      * All nice terminations should use this method.
      */
     public void quit() {
+        if (screenshotRunner != null) {
+            screenshotRunner.stop();
+        }
+
         if (trayComponent != null) {
             trayComponent.quitting();
         }
-        
+
         System.exit(0);
     }
-    
+
     public DBXCRuntime() {
         //Debug
         Path workingDir = Paths.get(".");
@@ -199,7 +207,7 @@ public class DBXCRuntime {
 
         //Initialize the configuration object - this gets loaded from disk next.
         settings = new Configuration();
-        
+
         try {
             checkDirectoryStructureAndLoadConfiguration();
         } catch (IOException ioe) {
@@ -210,7 +218,7 @@ public class DBXCRuntime {
                     + " exists and is writable. If this problem persists, try "
                     + "deleting " + SETTINGS_FILE_NAME, "DBXCapture - Error",
                     JOptionPane.ERROR_MESSAGE);
-            
+
             System.exit(1);
         }
 
@@ -223,12 +231,7 @@ public class DBXCRuntime {
         //Sanity checks should all be done by now, so start the key listener and
         //show the tray icon.
         trayComponent = new DBXCTrayComponent(this);
-        
-        
-        
-        
-        
-        
+        screenshotRunner = new ScreenshotRunner(this);
     }
 
     /**

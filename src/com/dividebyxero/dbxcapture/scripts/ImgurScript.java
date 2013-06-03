@@ -7,7 +7,9 @@ package com.dividebyxero.dbxcapture.scripts;
 
 /**
  * This script will upload an image path on the command line to Imgur or save to
- * the desktop based on another command line flag.
+ * the desktop based on another command line flag. Separate from the rest of the
+ * DBXCapture program in the sense that this class has its own main method and
+ * should be invoked from the command line automatically by the script engine.
  *
  * @author Alex Kersten
  */
