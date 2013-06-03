@@ -12,6 +12,7 @@
 package com.dividebyxero.dbxcapture.gui;
 
 import com.dividebyxero.dbxcapture.DBXCRuntime;
+import com.dividebyxero.dbxcapture.jni.DBXCNativeInterface;
 import javax.imageio.ImageIO;
 
 /**
@@ -64,6 +65,11 @@ public class DebugFrame extends javax.swing.JFrame {
         debugLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
 
         dumpBitmapButton.setText("Native bitmap dump");
+        dumpBitmapButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dumpBitmapButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -88,6 +94,10 @@ public class DebugFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void dumpBitmapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dumpBitmapButtonActionPerformed
+        DBXCNativeInterface.debugDumpBuffer();
+    }//GEN-LAST:event_dumpBitmapButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel debugLabel;
     private javax.swing.JButton dumpBitmapButton;

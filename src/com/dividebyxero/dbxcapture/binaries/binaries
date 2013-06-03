@@ -1,0 +1,13 @@
+The files in here get copied out as 'default' files. See relevant code sections
+in Platforming.java and DBXCRuntime.java (currently the three files are the 32-
+and 64-bit versions of the Windows native library and the default upload script
+which goes in the .../scripts directory).
+
+The reason this exists is that I don't know of a better solution for having a
+singular portable JAR/EXE that can reconstitute its home directory structure
+by just being run all by itself without the aid of any installer. Other than
+these three files, this program can recreate its directory structure wherever it
+gets executed (it saves its files to ~/dbx/DBXCapture and treats that as the
+working directory). I really don't want to turn this into an installer - just
+have people download the .jar and run it, and everything works as it should;
+they can move the JAR around and run it, add it to startup folder, whatever.

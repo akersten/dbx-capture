@@ -27,11 +27,17 @@ import javax.swing.JOptionPane;
  */
 public class DBXCRuntime {
 
+    //The path to where all the program's information should be stored.
+    public static final String PROGRAM_HOME = System.getProperty("user.home")
+                                              + "/dbx/DBXCapture";
+
     //Name of the settings file within the working directory
-    public static final String SETTINGS_FILE_NAME = "settings.cfg";
+    public static final String SETTINGS_FILE_NAME =
+                               PROGRAM_HOME + "/settings.cfg";
 
     //Name of scripts file containing command line actions for postprocessing.
-    private static final String SCRIPTS_FILE_NAME = "scripts.cfg";
+    private static final String SCRIPTS_FILE_NAME =
+                                PROGRAM_HOME + "/scripts.cfg";
 
     //Settings singleton to query and update during program operation. Should
     //save it when it's updated.
@@ -50,9 +56,12 @@ public class DBXCRuntime {
     //Listener for keypress actions
     private ScreenshotRunner screenshotRunner;
 
+    //The name of the default script file on disk.
+    private static final String DEFAULT_SCRIPT_FILENAME = "ImgurScript.class";
+
     //The default script command line which will be put into scripts.cfg if
     //it doesn't exist.
-    private static final String DEFAULT_SCRIPT =
+    private static final String DEFAULT_COMMAND_LINE =
                                 "java ImgurScript %imagepath% %localmode%";
 
     /**
@@ -62,7 +71,7 @@ public class DBXCRuntime {
     private void setDefaultSettings() {
         getSettings().setSetting("bConfirmExit", "false");
         getSettings().setSetting("sContentDirectory",
-                                 "C:\\dbx\\DBXCapture\\content");
+                                 PROGRAM_HOME + "/content");
         getSettings().setSetting("iUploadScript", "0");
         getSettings().setSetting("bLocalMode", "false");
         getSettings().setSetting("iScreenshotKey", "44");
@@ -84,7 +93,8 @@ public class DBXCRuntime {
      *
      * <ul><li>Ensures the configuration file exists, and loads it if it
      * does.</li><li>If not, generates the default one.</li><li>Ensures the
-     * scripts folder exists.</li><li>Ensures the specified content directory
+     * scripts folder exists - if not, creates it and populates it with the
+     * default script.</li><li>Ensures the specified content directory
      * exists.</li><li>Loads all command lines from scripts.cfg into
      * memory.</li><li>Creates default scripts.cfg if it does not
      * exist.</li><li>Makes sure the specified selected script is within
@@ -122,7 +132,7 @@ public class DBXCRuntime {
                                       + "Check working directory permissions.");
             }
 
-            Files.write(scriptsFile, DEFAULT_SCRIPT.getBytes());
+            Files.write(scriptsFile, DEFAULT_COMMAND_LINE.getBytes());
         }
 
         //Load the command lines into postProcessScripts, line by line.
@@ -133,9 +143,11 @@ public class DBXCRuntime {
             System.out.println(
                     "Scripts file empty, deleting and using default...");
 
+            //The actual default file will be re-created on next program start.
+
             Files.delete(scriptsFile);
             postProcessScripts = new String[1];
-            postProcessScripts[0] = DEFAULT_SCRIPT;
+            postProcessScripts[0] = DEFAULT_COMMAND_LINE;
         } else {
             postProcessScripts = new String[tmpScriptLines.size()];
 
@@ -163,14 +175,18 @@ public class DBXCRuntime {
             getSettings().saveSettings(new File(SETTINGS_FILE_NAME));
         }
 
-        Path scriptsFolder = Paths.get("scripts/");
-        if (!Files.isDirectory(scriptsFolder)) {
-            JOptionPane.showMessageDialog(
-                    null, "No postprocessing scripts folder was found. You"
-                          + " might need to reinstall DBXCapture.",
-                    "DBXCapture - Warning", JOptionPane.WARNING_MESSAGE);
+        Path scriptsFolder = Paths.get(PROGRAM_HOME + "/scripts");
 
-            //TODO: Check for default script existing and insert it if necessary
+        if (!Files.isDirectory(scriptsFolder)) {
+            //TODO: Create scripts folder and drop default script.
+            Files.createDirectories(scriptsFolder);
+
+            if (!Platforming.copyFileFromBinariesToDisk(
+                    "ImgurScript.bin",
+                    PROGRAM_HOME + "/scripts/" + DEFAULT_SCRIPT_FILENAME)) {
+
+                throw new IOException("Copying default script failed.");
+            }
         }
 
 
@@ -200,12 +216,16 @@ public class DBXCRuntime {
         System.exit(0);
     }
 
+    /**
+     * Creates and starts a DBXCapture runtime. Note that some of the initial
+     * directory structure creation code is in the static block of the
+     * Platforming.java file.
+     *
+     * @param debug Whether to start in debug mode or not. Debug mode will stop
+     * the normal key listeners from running and launch the debug interface
+     * instead. Not recommended for production ;).
+     */
     public DBXCRuntime(boolean debug) {
-        //Debug
-        Path workingDir = Paths.get(".");
-        System.out.println("Working directory is "
-                           + workingDir.toAbsolutePath().toString());
-
         //Initialize the configuration object - this gets loaded from disk next.
         settings = new Configuration();
 
@@ -214,10 +234,11 @@ public class DBXCRuntime {
         } catch (IOException ioe) {
             JOptionPane.showMessageDialog(
                     null,
-                    "I/O error during working directory configuration. Make "
-                    + "sure " + workingDir.toAbsolutePath().toString()
-                    + " exists and is writable. If this problem persists, try "
-                    + "deleting " + SETTINGS_FILE_NAME, "DBXCapture - Error",
+                    "I/O error during user directory configuration. Make "
+                    + "sure your home directory is writable. If this problem "
+                    + "persists, try deleting " + SETTINGS_FILE_NAME + "\n\n"
+                    + "Specific error:\n" + ioe.getLocalizedMessage(),
+                    "DBXCapture - Error",
                     JOptionPane.ERROR_MESSAGE);
 
             System.exit(1);

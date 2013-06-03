@@ -11,7 +11,7 @@ package com.dividebyxero.dbxcapture.jni;
  * @author Alex Kersten
  */
 public abstract class DBXCNativeInterface {
-
+    
     /**
      * This will just test to see if DirectX is even a feasible way of capturing
      * the screen by dumping the video buffer out to a bitmap in the working
