@@ -6,6 +6,7 @@
 package com.dividebyxero.dbxcapture;
 
 import com.dividebyxero.dbxcapture.config.Configuration;
+import com.dividebyxero.dbxcapture.gui.DBXCTrayComponent;
 import com.dividebyxero.dbxcapture.gui.SettingsFrame;
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,7 @@ import javax.swing.JOptionPane;
 public class DBXCRuntime {
 
     //Name of the settings file within the working directory
-    private static final String SETTINGS_FILE_NAME = "settings.cfg";
+    public static final String SETTINGS_FILE_NAME = "settings.cfg";
 
     //Name of scripts file containing command line actions for postprocessing.
     private static final String SCRIPTS_FILE_NAME = "scripts.cfg";
@@ -41,6 +42,14 @@ public class DBXCRuntime {
     //The settings frame for DBXCapture.
     private SettingsFrame settingsFrame;
 
+    //The tray component reference.
+    private DBXCTrayComponent trayComponent;
+
+    //The default script command line which will be put into scripts.cfg if
+    //it doesn't exist.
+    private static final String DEFAULT_SCRIPT =
+                                "java ImgurScript %imagepath% %localmode%";
+
     /**
      * (Re)sets settings to default values. Should invoke if settings file
      * doesn't exist.
@@ -51,6 +60,7 @@ public class DBXCRuntime {
                                  "C:\\dbx\\DBXCapture\\content");
         getSettings().setSetting("iUploadScript", "0");
         getSettings().setSetting("bLocalMode", "false");
+        getSettings().setSetting("iScreenshotKey", "44");
 
         if (!settings.saveSettings(new File(SETTINGS_FILE_NAME))) {
             JOptionPane.showMessageDialog(
@@ -63,8 +73,6 @@ public class DBXCRuntime {
             System.exit(1);
         }
     }
-    private static final String DEFAULT_SCRIPT =
-                                "java ImgurScript %imagepath% %localmode%";
 
     /**
      * This method:
@@ -200,8 +208,9 @@ public class DBXCRuntime {
         settingsFrame = new SettingsFrame(this);
 
 
-
-
+        //Sanity checks should all be done by now, so start the key listener and
+        //show the tray icon.
+        trayComponent = new DBXCTrayComponent(this);
 
 
 

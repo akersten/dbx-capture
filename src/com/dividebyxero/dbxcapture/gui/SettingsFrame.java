@@ -12,7 +12,18 @@
 package com.dividebyxero.dbxcapture.gui;
 
 import com.dividebyxero.dbxcapture.DBXCRuntime;
+import com.dividebyxero.dbxcapture.DBXCapture;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -50,15 +61,31 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         initComponents();
         try {
-            setIconImage(ImageIO.read(new File("icon16.png")));
+            //setIconImage(ImageIO.read(new File("icon16.png")));
+            setIconImage(ImageIO.read(
+                    this.getClass().getResource("icon16.png")));
         } catch (Exception e) {
             System.err.println("Can't load frame icon.");
         }
 
         this.setLocationRelativeTo(null);
 
+        //TODO: Implement update checking and updating.
         updateButton.setVisible(false);
+        
+        
         setupFromLoadedSettings();
+        versionLabel.setText(DBXCapture.VERSION);
+
+        //When hiding the window (default behavior is to hide), discard any
+        //intermediate changes (as if the user had hit the discard button).
+        this.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                setToLastKnown();
+            }
+        });
     }
 
     /**
@@ -67,13 +94,8 @@ public class SettingsFrame extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     private void setupFromLoadedSettings() {
-
-        //Populate fields based on current settings.
-        confirmExitCheckBox.setSelected(context.getSettings().
-                getSetting("bConfirmExit").equalsIgnoreCase("true"));
-
-        contentDirectoryTextField.setText(context.getSettings().
-                getSetting("sContentDirectory"));
+        //All we need to do here is populate the combobox model, and then set
+        //things to the last known configuration (which is what we loaded).
 
         //Create model for script dropdown and set its index to the proper one.
         DefaultComboBoxModel<String> newModel = new DefaultComboBoxModel<>();
@@ -84,6 +106,22 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         currentScriptComboBox.setModel(newModel);
 
+        setToLastKnown();
+    }
+
+    /**
+     * Sets the settings back to the last known configuration (like if we hide
+     * the form when the cancel button was pressed, so we don't go back to
+     * intermediate settings when we re-show it).
+     */
+    private void setToLastKnown() {
+        //Populate fields based on current settings.
+        confirmExitCheckBox.setSelected(context.getSettings().
+                getSetting("bConfirmExit").equalsIgnoreCase("true"));
+
+        contentDirectoryTextField.setText(context.getSettings().
+                getSetting("sContentDirectory"));
+
         //We already know this index is within range - it was checked when the
         //settings were loaded.
         currentScriptComboBox.setSelectedIndex(
@@ -93,6 +131,49 @@ public class SettingsFrame extends javax.swing.JFrame {
         localmodeCheckBox.setSelected(context.getSettings().
                 getSetting("bLocalMode").equalsIgnoreCase("true"));
 
+        triggerTextField.setText(
+                context.getSettings().getSetting("iScreenshotKey"));
+
+    }
+
+    /**
+     * Verify and apply settings changes.
+     *
+     * @return True if settings applied and saved successfully, false if there
+     * was a problem parsing one of the new settings or saving them.
+     */
+    private boolean setAndSaveSettings() {
+        context.getSettings().setSetting("bConfirmExit",
+                                         confirmExitCheckBox.isSelected()
+                                         ? "true" : "false");
+
+        //Verify that the content directory is actually a directory.
+        Path testp = Paths.get(contentDirectoryTextField.getText());
+        if (!Files.isDirectory(testp)) {
+            return false;
+        }
+
+        context.getSettings().setSetting("sContentDirectory",
+                                         contentDirectoryTextField.getText());
+
+        context.getSettings().setSetting(
+                "iUploadScript", "" + currentScriptComboBox.getSelectedIndex());
+
+        context.getSettings().setSetting("bLocalMode",
+                                         localmodeCheckBox.isSelected()
+                                         ? "true" : "false");
+
+        int testssk;
+        try {
+            testssk = Integer.parseInt(triggerTextField.getText());
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+
+        context.getSettings().setSetting("iScreenshotKey", "" + testssk);
+
+        return context.getSettings().
+                saveSettings(new File(DBXCRuntime.SETTINGS_FILE_NAME));
     }
 
     /**
@@ -111,6 +192,12 @@ public class SettingsFrame extends javax.swing.JFrame {
         contentDirectoryPanel = new javax.swing.JPanel();
         contentDirectoryTextField = new javax.swing.JTextField();
         updateButton = new javax.swing.JButton();
+        screenshotSettingsPanel = new javax.swing.JPanel();
+        trigger1Label = new javax.swing.JLabel();
+        triggerTextField = new javax.swing.JTextField();
+        trigger2Label = new javax.swing.JLabel();
+        triggerFinishedButton = new javax.swing.JButton();
+        resetTriggerButton = new javax.swing.JButton();
         scriptsSettingsPanel = new javax.swing.JPanel();
         scriptinfo1Label = new javax.swing.JLabel();
         scriptinfo2Label = new javax.swing.JLabel();
@@ -139,7 +226,6 @@ public class SettingsFrame extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
         applyButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("DBXCapture - Options");
         setResizable(false);
 
@@ -166,7 +252,7 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         contentDirectoryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Content directory"));
 
-        contentDirectoryTextField.setText("C:\\dbx\\DBXCapture\\tmp");
+        contentDirectoryTextField.setText("<content directory>");
 
         javax.swing.GroupLayout contentDirectoryPanelLayout = new javax.swing.GroupLayout(contentDirectoryPanel);
         contentDirectoryPanel.setLayout(contentDirectoryPanelLayout);
@@ -212,6 +298,73 @@ public class SettingsFrame extends javax.swing.JFrame {
         );
 
         settingsTabbedPane.addTab("DBXC", dbxcSettingsPanel);
+
+        trigger1Label.setText("Trigger keycode:");
+
+        triggerTextField.setBackground(new java.awt.Color(255, 255, 204));
+        triggerTextField.setEditable(false);
+        triggerTextField.setText("<trigger>");
+        triggerTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                triggerTextFieldFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                triggerTextFieldFocusLost(evt);
+            }
+        });
+        triggerTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                triggerTextFieldKeyPressed(evt);
+            }
+        });
+
+        trigger2Label.setText("Click in the box above and press a key to set it.");
+
+        triggerFinishedButton.setText("Finished");
+        triggerFinishedButton.setEnabled(false);
+
+        resetTriggerButton.setText("Reset to PrintScreen (44)");
+        resetTriggerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetTriggerButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout screenshotSettingsPanelLayout = new javax.swing.GroupLayout(screenshotSettingsPanel);
+        screenshotSettingsPanel.setLayout(screenshotSettingsPanelLayout);
+        screenshotSettingsPanelLayout.setHorizontalGroup(
+            screenshotSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(screenshotSettingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(trigger1Label)
+                .addGap(18, 18, 18)
+                .addGroup(screenshotSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(trigger2Label, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+                    .addGroup(screenshotSettingsPanelLayout.createSequentialGroup()
+                        .addComponent(triggerTextField)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(triggerFinishedButton))
+                    .addGroup(screenshotSettingsPanelLayout.createSequentialGroup()
+                        .addComponent(resetTriggerButton)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        screenshotSettingsPanelLayout.setVerticalGroup(
+            screenshotSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(screenshotSettingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(screenshotSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(trigger1Label)
+                    .addComponent(triggerTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(triggerFinishedButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(trigger2Label)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resetTriggerButton)
+                .addContainerGap(163, Short.MAX_VALUE))
+        );
+
+        settingsTabbedPane.addTab("Screenshot Options", screenshotSettingsPanel);
 
         scriptinfo1Label.setText("After capturing a screenshot and saving it to a file, dbxcapture passes the file path to a script for");
 
@@ -323,7 +476,7 @@ public class SettingsFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        settingsTabbedPane.addTab("Scripts", scriptsSettingsPanel);
+        settingsTabbedPane.addTab("Screenshot Scripts", scriptsSettingsPanel);
 
         iconLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dividebyxero/dbxcapture/gui/icon128.png"))); // NOI18N
 
@@ -336,8 +489,18 @@ public class SettingsFrame extends javax.swing.JFrame {
         authorLabel.setText("Alex Kersten");
 
         githubButton.setText("GitHub Page");
+        githubButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                githubButtonActionPerformed(evt);
+            }
+        });
 
         dividebyxeroButton.setText("dividebyxero.com");
+        dividebyxeroButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dividebyxeroButtonActionPerformed(evt);
+            }
+        });
 
         alexkerstenButton.setText("alexkersten.com");
         alexkerstenButton.addActionListener(new java.awt.event.ActionListener() {
@@ -413,10 +576,20 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         settingsTabbedPane.addTab("About", aboutPanel);
 
-        cancelButton.setText("Cancel");
+        cancelButton.setText("Discard Changes");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         applyButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         applyButton.setText("Apply Changes");
+        applyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -447,8 +620,76 @@ public class SettingsFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void alexkerstenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alexkerstenButtonActionPerformed
-        //  
+        try {
+            Desktop.getDesktop().browse(
+                    new URI("http://alexkersten.com"));
+        } catch (IOException | URISyntaxException ex) {
+            JOptionPane.showMessageDialog(this, "Couldn't open browser.",
+                                          "DBXCapture - Warning",
+                                          JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_alexkerstenButtonActionPerformed
+
+    private void triggerTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_triggerTextFieldKeyPressed
+        triggerTextField.setText(evt.getKeyCode() + "");
+    }//GEN-LAST:event_triggerTextFieldKeyPressed
+
+    private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
+        if (!setAndSaveSettings()) {
+            JOptionPane.showMessageDialog(
+                    this, "There was a problem applying changes, please make "
+                          + "sure all inputs are valid.\nAlso, be sure that "
+                          + "specified directories actually exist.",
+                    "DBXCapture - Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        setVisible(false);
+    }//GEN-LAST:event_applyButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        setToLastKnown();
+        setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void githubButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_githubButtonActionPerformed
+        try {
+            Desktop.getDesktop().browse(
+                    new URI("https://github.com/akersten/dbx-capture"));
+        } catch (IOException | URISyntaxException ex) {
+            JOptionPane.showMessageDialog(this, "Couldn't open browser.",
+                                          "DBXCapture - Warning",
+                                          JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_githubButtonActionPerformed
+
+    private void triggerTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_triggerTextFieldFocusGained
+        triggerTextField.setBackground(new Color(255, 204, 255));
+        //The finished button doesn't actually do anything, it just works as
+        //a nice placebo to take the focus away from the form to prevent
+        //accidental changes.
+        triggerFinishedButton.setEnabled(true);
+
+    }//GEN-LAST:event_triggerTextFieldFocusGained
+
+    private void triggerTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_triggerTextFieldFocusLost
+        triggerTextField.setBackground(new Color(255, 255, 204));
+        triggerFinishedButton.setEnabled(false);
+    }//GEN-LAST:event_triggerTextFieldFocusLost
+
+    private void resetTriggerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetTriggerButtonActionPerformed
+        triggerTextField.setText("44");
+    }//GEN-LAST:event_resetTriggerButtonActionPerformed
+
+    private void dividebyxeroButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dividebyxeroButtonActionPerformed
+        try {
+            Desktop.getDesktop().browse(
+                    new URI("http://dividebyxero.com"));
+        } catch (IOException | URISyntaxException ex) {
+            JOptionPane.showMessageDialog(this, "Couldn't open browser.",
+                                          "DBXCapture - Warning",
+                                          JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_dividebyxeroButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel aboutPanel;
     private javax.swing.JButton alexkerstenButton;
@@ -476,12 +717,18 @@ public class SettingsFrame extends javax.swing.JFrame {
     private javax.swing.JLabel imagepath2Label;
     private javax.swing.JCheckBox localmodeCheckBox;
     private javax.swing.JLabel localmodeLabel;
+    private javax.swing.JButton resetTriggerButton;
+    private javax.swing.JPanel screenshotSettingsPanel;
     private javax.swing.JPanel scriptVariablesPanel;
     private javax.swing.JLabel scriptinfo1Label;
     private javax.swing.JLabel scriptinfo2Label;
     private javax.swing.JLabel scriptinfo3Label;
     private javax.swing.JPanel scriptsSettingsPanel;
     private javax.swing.JTabbedPane settingsTabbedPane;
+    private javax.swing.JLabel trigger1Label;
+    private javax.swing.JLabel trigger2Label;
+    private javax.swing.JButton triggerFinishedButton;
+    private javax.swing.JTextField triggerTextField;
     private javax.swing.JButton updateButton;
     private javax.swing.JLabel versionLabel;
     // End of variables declaration//GEN-END:variables
