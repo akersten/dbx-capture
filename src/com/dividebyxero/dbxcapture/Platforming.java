@@ -136,7 +136,7 @@ public abstract class Platforming {
             if (!Files.exists(testDLL)) {
                 if (!copyFileFromBinariesToDisk(
                         is64 ? "libcapture64.bin" : "libcapture32.bin",
-                        DBXCRuntime.PROGRAM_HOME
+                        DBXCRuntime.PROGRAM_HOME + "/"
                         + DBXCapture.platform.getLibName())) {
 
                     JOptionPane.showMessageDialog(
