@@ -40,8 +40,7 @@ public class DBXCapture {
     //Global version string for DBXCapture, appears in many places.
     public static final String VERSION = "2.0.0 Dev";
 
-    //Keeps track of which platform we're running on. Gets set by the static
-    //block in Platforming.java.
+    //Keeps track of which platform we're running on.
     public static Platform platform;
 
     //Singleton for the runtime, set once at the beginning here and probably

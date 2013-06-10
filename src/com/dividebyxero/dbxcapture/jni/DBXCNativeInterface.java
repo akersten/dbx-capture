@@ -11,7 +11,7 @@ package com.dividebyxero.dbxcapture.jni;
  * @author Alex Kersten
  */
 public abstract class DBXCNativeInterface {
-    
+
     /**
      * This will just test to see if DirectX is even a feasible way of capturing
      * the screen by dumping the video buffer out to a bitmap in the working
@@ -20,12 +20,20 @@ public abstract class DBXCNativeInterface {
      */
     public static native void debugDumpBuffer();
 
+    ////////////////////////////////////////////////////////////////////////////
     /**
-     * Blocks until the user presses PrintScreen and then returns with the path
-     * to a created PNG file on the hard drive.
+     * Blocks the current thread until the user presses the specified key (via
+     * global keyboard hook).
      *
-     * @return The path to the created PNG file. NOTE: This should be in QUOTES.
+     * @param vk Which key to wait for.
      */
-    public static native String waitForScreenshotActionAndReturnPath(
-            String contentDirectory, int triggerVK);
+    public static native void blockUntilKeypress(int vk);
+
+    /**
+     * Returns the bitmap of the entire visible screen as a 2d byte array, 8-bit
+     * RGB encoded.
+     *
+     * @return 8-bit RGB array of the screen.
+     */
+    public static native byte[][] dumpScreenBits();
 }
