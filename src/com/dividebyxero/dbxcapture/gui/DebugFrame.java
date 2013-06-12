@@ -55,11 +55,12 @@ public class DebugFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         debugLabel = new javax.swing.JLabel();
-        dumpBitmapButton = new javax.swing.JButton();
+        dxDumpButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         alertTextField = new javax.swing.JTextField();
         lockButton = new javax.swing.JButton();
         keycodeTextField = new javax.swing.JTextField();
+        gdiDumpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("DBXCapture - Debug");
@@ -68,10 +69,10 @@ public class DebugFrame extends javax.swing.JFrame {
         debugLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dividebyxero/dbxcapture/gui/icon128.png"))); // NOI18N
         debugLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
 
-        dumpBitmapButton.setText("Dump screen to bitmap in working directory");
-        dumpBitmapButton.addActionListener(new java.awt.event.ActionListener() {
+        dxDumpButton.setText("Dump screen to bitmap in working directory (DX11)");
+        dxDumpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dumpBitmapButtonActionPerformed(evt);
+                dxDumpButtonActionPerformed(evt);
             }
         });
 
@@ -98,6 +99,8 @@ public class DebugFrame extends javax.swing.JFrame {
             }
         });
 
+        gdiDumpButton.setText("Dump screen to bitmap in working directory (GDI)");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -105,7 +108,7 @@ public class DebugFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dumpBitmapButton, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                    .addComponent(dxDumpButton, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(debugLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -114,7 +117,8 @@ public class DebugFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(alertTextField)
-                            .addComponent(keycodeTextField))))
+                            .addComponent(keycodeTextField)))
+                    .addComponent(gdiDumpButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -123,7 +127,9 @@ public class DebugFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(debugLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dumpBitmapButton)
+                .addComponent(dxDumpButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(gdiDumpButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -132,15 +138,15 @@ public class DebugFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lockButton)
                     .addComponent(keycodeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(120, Short.MAX_VALUE))
+                .addContainerGap(91, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void dumpBitmapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dumpBitmapButtonActionPerformed
+    private void dxDumpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dxDumpButtonActionPerformed
         DBXCNativeInterface.debugDumpBuffer();
-    }//GEN-LAST:event_dumpBitmapButtonActionPerformed
+    }//GEN-LAST:event_dxDumpButtonActionPerformed
 
     private void keycodeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keycodeTextFieldActionPerformed
         // TODO add your handling code here:
@@ -159,7 +165,8 @@ public class DebugFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField alertTextField;
     private javax.swing.JLabel debugLabel;
-    private javax.swing.JButton dumpBitmapButton;
+    private javax.swing.JButton dxDumpButton;
+    private javax.swing.JButton gdiDumpButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JTextField keycodeTextField;
     private javax.swing.JButton lockButton;

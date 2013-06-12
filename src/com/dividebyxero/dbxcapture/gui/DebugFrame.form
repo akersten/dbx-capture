@@ -24,10 +24,10 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="dumpBitmapButton" pref="318" max="32767" attributes="0"/>
+                  <Component id="dxDumpButton" pref="318" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="debugLabel" max="32767" attributes="0"/>
@@ -40,6 +40,7 @@
                           <Component id="keycodeTextField" max="32767" attributes="0"/>
                       </Group>
                   </Group>
+                  <Component id="gdiDumpButton" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -51,7 +52,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="debugLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="dumpBitmapButton" min="-2" max="-2" attributes="0"/>
+              <Component id="dxDumpButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="gdiDumpButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -62,7 +65,7 @@
                   <Component id="lockButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="keycodeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="120" max="32767" attributes="0"/>
+              <EmptySpace pref="91" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -76,12 +79,12 @@
         <Property name="verticalTextPosition" type="int" value="1"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="dumpBitmapButton">
+    <Component class="javax.swing.JButton" name="dxDumpButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Dump screen to bitmap in working directory"/>
+        <Property name="text" type="java.lang.String" value="Dump screen to bitmap in working directory (DX11)"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dumpBitmapButtonActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dxDumpButtonActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton1">
@@ -110,6 +113,11 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="keycodeTextFieldActionPerformed"/>
         <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="keycodeTextFieldKeyPressed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="gdiDumpButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Dump screen to bitmap in working directory (GDI)"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
