@@ -8,16 +8,16 @@ package com.dividebyxero.dbxcapture.jni;
 /**
  * The interface providing methods that get executed in native code.
  *
+ * Any library that implements these should use preprocessor directives to
+ *
+ * For example, on Windows, any GDI_, and DX_ methods should be implemented. On
+ * Linux, any XLIB_ methods should be implemented. I'm pretty sure Mac also uses
+ * Xlib, so just implement a Mac version of the keypress detection.
+ *
  * @author Alex Kersten
  */
 public abstract class DBXCNativeInterface {
 
-    /**
-     * This will just test to see if DirectX is even a feasible way of capturing
-     * the screen by dumping the video buffer out to a bitmap in the working
-     * directory. Not used by the actual program (we'll use PNG) but useful for
-     * testing.
-     */
     public static native void debugDumpBuffer();
 
     ////////////////////////////////////////////////////////////////////////////

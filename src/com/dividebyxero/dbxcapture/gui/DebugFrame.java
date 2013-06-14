@@ -42,6 +42,7 @@ public class DebugFrame extends javax.swing.JFrame {
             System.err.println("Can't load frame icon.");
         }
 
+        alertSpinner.setValue(new Integer(4));
         this.setLocationRelativeTo(null);
     }
 
@@ -56,11 +57,13 @@ public class DebugFrame extends javax.swing.JFrame {
 
         debugLabel = new javax.swing.JLabel();
         dxDumpButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        alertButton = new javax.swing.JButton();
         alertTextField = new javax.swing.JTextField();
         lockButton = new javax.swing.JButton();
         keycodeTextField = new javax.swing.JTextField();
         gdiDumpButton = new javax.swing.JButton();
+        xlibDumpButton = new javax.swing.JButton();
+        alertSpinner = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("DBXCapture - Debug");
@@ -76,7 +79,12 @@ public class DebugFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Show test alert:");
+        alertButton.setText("Show test alert:");
+        alertButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                alertButtonActionPerformed(evt);
+            }
+        });
 
         alertTextField.setText("Alert text");
 
@@ -101,6 +109,8 @@ public class DebugFrame extends javax.swing.JFrame {
 
         gdiDumpButton.setText("Dump screen to bitmap in working directory (GDI)");
 
+        xlibDumpButton.setText("Dump screen to bitmap in working directory (Xlib)");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -112,13 +122,17 @@ public class DebugFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(debugLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(alertButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lockButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(alertTextField)
-                            .addComponent(keycodeTextField)))
-                    .addComponent(gdiDumpButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(keycodeTextField)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(alertTextField)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(alertSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(gdiDumpButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(xlibDumpButton, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -131,14 +145,17 @@ public class DebugFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(gdiDumpButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xlibDumpButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(alertTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(alertButton)
+                    .addComponent(alertTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(alertSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lockButton)
                     .addComponent(keycodeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(91, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
 
         pack();
@@ -162,14 +179,20 @@ public class DebugFrame extends javax.swing.JFrame {
         } catch (NumberFormatException nfe) {
         }
     }//GEN-LAST:event_lockButtonActionPerformed
+
+    private void alertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alertButtonActionPerformed
+        AlertFactory.showAlert(alertTextField.getText(), ((Integer) alertSpinner.getValue()) * 1000);
+    }//GEN-LAST:event_alertButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton alertButton;
+    private javax.swing.JSpinner alertSpinner;
     private javax.swing.JTextField alertTextField;
     private javax.swing.JLabel debugLabel;
     private javax.swing.JButton dxDumpButton;
     private javax.swing.JButton gdiDumpButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JTextField keycodeTextField;
     private javax.swing.JButton lockButton;
+    private javax.swing.JButton xlibDumpButton;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -26,8 +26,6 @@ public class DBXCTrayComponent {
 
     private PopupMenu trayMenu;
 
-    public static final String[] TOGGLE_STRINGS = {"Switch to local mode",
-                                                   "Switch to upload mode"};
 
     public static final String[] DISABLE_STRINGS = {"Temporarily disable dbxc",
                                                     "Re-enable dbxc"};
@@ -58,9 +56,6 @@ public class DBXCTrayComponent {
 
 
         try {
-            //  trayIcon = new TrayIcon(ImageIO.read(new File("icon16.png")),
-            //                          "DBXCapture  " + DBXCapture.VERSION);
-
             trayIcon = new TrayIcon(ImageIO.read(
                     this.getClass().getResource("icon16.png")),
                                     "DBXCapture " + DBXCapture.VERSION);
@@ -122,23 +117,6 @@ public class DBXCTrayComponent {
                 });
 
         trayMenu.insert(new MenuItem("-"), 0);
-
-
-
-        //Local/upload toggle button
-        final MenuItem localToggleMenuItem = new MenuItem(TOGGLE_STRINGS[0]);
-        trayMenu.insert(localToggleMenuItem, 0);
-        localToggleMenuItem.addActionListener(
-                new ActionListener() {
-
-                    public void actionPerformed(ActionEvent e) {
-                        //TODO: Implement local mode toggle
-                        /*
-                         * contextRef.toggleMode();
-                         * localToggleMenuItem.setLabel(TOGGLE_STRINGS[contextRef.getMode()]);
-                         */
-                    }
-                });
 
 
 

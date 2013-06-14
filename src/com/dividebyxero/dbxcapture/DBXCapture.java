@@ -35,7 +35,7 @@ public class DBXCapture {
     //Set if this build should run the debug interface instead of the normal
     //keyboard listeners. Should always be false in production, otherwise DBXC
     //doesn't do much.
-    private static final boolean DEBUG_BUILD = true;
+    private static final boolean DEBUG_BUILD = false;
 
     //Global version string for DBXCapture, appears in many places.
     public static final String VERSION = "2.0.0 Dev";

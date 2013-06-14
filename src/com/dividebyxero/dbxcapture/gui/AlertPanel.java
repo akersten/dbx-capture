@@ -6,16 +6,33 @@
 package com.dividebyxero.dbxcapture.gui;
 
 /**
+ * The JPanel containing the alert. This should be inside of an undecorated
+ * JWindow created by the Alert object, which should then be pack()ed in order
+ * to ensure that the alert box is the right size.
  *
- * @author Alex
+ * @author Alex Kersten
  */
+@SuppressWarnings("serial")
 public class AlertPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form AlertPanel
      */
-    public AlertPanel() {
+    public AlertPanel(String message) {
         initComponents();
+
+        this.setSize(AlertFactory.DEFAULT_ALERT_SIZE);
+
+        setMessage(message);
+    }
+
+    /**
+     * Updates the message on the AlertPanel.
+     *
+     * @param message The message to set.
+     */
+    public final void setMessage(String message) {
+        this.alertLabel.setText(message);
     }
 
     /**
@@ -27,19 +44,29 @@ public class AlertPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        alertLabel = new javax.swing.JLabel();
+
         setBackground(new java.awt.Color(245, 245, 245));
+        setMaximumSize(new java.awt.Dimension(256, 16));
+        setPreferredSize(new java.awt.Dimension(256, 16));
+
+        alertLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dividebyxero/dbxcapture/gui/icon16.png"))); // NOI18N
+        alertLabel.setText("DBXC Debug Text... You shouldn't see this. Offscreen");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 324, Short.MAX_VALUE)
+            .addComponent(alertLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 124, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(alertLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel alertLabel;
     // End of variables declaration//GEN-END:variables
 }
