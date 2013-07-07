@@ -1,7 +1,7 @@
 dbx-capture
 ===========
 
-DBXCapture is a modular desktop screenshot sharing application written in Java and C++ via JNI.
+DBXCapture is a modular desktop screenshot sharing application written in Java and C++ via JNI. (It's not quite done yet though - below is just an outline of functionality, subject to change.)
 
 ### Screenshots
 
